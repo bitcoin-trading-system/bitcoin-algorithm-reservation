@@ -1,20 +1,33 @@
 package main
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"flag"
+	"net/http"
+
+	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/db"
+	"github.com/gin-gonic/gin"
+
+	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/config"
 )
 
 func main() {
-    router := gin.Default()
+	tomlFilePath := flag.String("conf", "toml/local.toml", "tomlファイルの名前")
+	envFilePath := flag.String("env", "env/.env.local", "envファイルのパス")
+	flag.Parse()
 
-    router.GET("/health", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "status": "ok",
-        })
-    })
+	cfg := config.NewConfig(*tomlFilePath, *envFilePath)
 
-    if err := router.Run(":8003"); err != nil {
-        panic(err)
-    }
+	db.ConnectDB(cfg)
+
+	router := gin.Default()
+
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+		})
+	})
+
+	if err := router.Run(":8003"); err != nil {
+		panic(err)
+	}
 }

@@ -2,12 +2,10 @@ package main
 
 import (
 	"flag"
-	"net/http"
-
-	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/db"
-	"github.com/gin-gonic/gin"
 
 	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/config"
+	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/models"
+	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/router"
 )
 
 func main() {
@@ -17,15 +15,11 @@ func main() {
 
 	cfg := config.NewConfig(*tomlFilePath, *envFilePath)
 
-	db.ConnectDB(cfg)
+	if err := models.Init(cfg); err != nil {
+		panic(err)
+	}
 
-	router := gin.Default()
-
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status": "ok",
-		})
-	})
+	router := router.NewRouter(cfg)
 
 	if err := router.Run(":8003"); err != nil {
 		panic(err)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/config"
 	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/models"
+	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/utils"
 )
 
 func TestMainFunction(t *testing.T) {
@@ -41,6 +42,11 @@ func TestMainFunction(t *testing.T) {
 			name: "get_reservation_by_id",
 			args: args{
 				curl: func() []string {
+					r := models.NewReservation(utils.GenerateRandomString(10), utils.GenerateRandomString(10), utils.GenerateRandomString(10), utils.GenerateRandomBool())
+					if err := r.Create(models.GetterDB()); err != nil {
+						panic(err)
+					}
+
 					reservations, err := models.FindAllReservations(models.GetterDB())
 					if err != nil {
 						panic(err)

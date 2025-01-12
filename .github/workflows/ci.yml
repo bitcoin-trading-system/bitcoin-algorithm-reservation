@@ -31,6 +31,16 @@ jobs:
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
           golangci-lint run ./...
 
+      - name: setUp env file
+        run: |
+          mkdir env
+          touch env/.env.local
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > env/.env.local
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> env/.env.local
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> env/.env.local
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> env/.env.local
+          echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> env/.env.local
+
       - name: run docker db
         run: docker-compose -f docker-compose.yml up -d
 

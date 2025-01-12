@@ -25,3 +25,5 @@ go.work.sum
 .idea/
 
 main
+
+/mysql-data

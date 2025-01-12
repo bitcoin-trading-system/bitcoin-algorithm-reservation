@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/config"
 	"github.com/bitcoin-trading-system/bitcoin-algorithm-reservation/models"
@@ -16,7 +17,7 @@ func main() {
 	cfg := config.NewConfig(*tomlFilePath, *envFilePath)
 
 	if err := models.Init(cfg); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	router := router.NewRouter(cfg)

@@ -26,11 +26,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      - name: Run golintci checks
-        run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          golangci-lint run ./...
-
       - name: setUp env file
         run: |
           mkdir env
@@ -45,6 +40,17 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml up --build -d
 
+      - name: Wait for MySQL to be ready
+        run: |
+          while ! docker exec $(docker ps -q -f name=mysql) mysqladmin ping -h "localhost" --silent; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 10
+          done
+
+      - name: Run golintci checks
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          golangci-lint run ./...
 
       - name: Build the Go application
         run: go build .

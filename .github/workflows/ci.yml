@@ -42,7 +42,9 @@ jobs:
           echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> env/.env.local
 
       - name: run docker db
-        run: docker-compose -f docker-compose.yml up --build -d
+        run: |
+          docker-compose -f docker-compose.yml up --build -d
+
 
       - name: Build the Go application
         run: go build .
